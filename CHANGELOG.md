@@ -1,3 +1,12 @@
+# [2.0.0](https://github.com/Raven-Pensieve/obsidian-next-toc/compare/1.4.0...2.0.0) (2026-01-25)
+
+
+### 🔨 Chore
+
+* 转移仓库所有权给 Raven-Pensieve ([1097bb6](https://github.com/Raven-Pensieve/obsidian-next-toc/commit/1097bb6b556f02f17b352bc4ec2df30fe16e60d7))
+
+
+
 # [1.4.0](https://github.com/RavenHogWarts/obsidian-next-toc/compare/1.3.0...1.4.0) (2026-01-23)
 
 
