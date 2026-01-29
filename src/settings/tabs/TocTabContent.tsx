@@ -134,6 +134,24 @@ export const TocTabContent: FC = () => {
 					),
 				}}
 			/>
+
+			<ObsidianSetting
+				slots={{
+					name: LL.settings.toc.useReadingProgress.name(),
+					desc: LL.settings.toc.useReadingProgress.desc(),
+					control: (
+						<ObsidianSetting.Toggle
+							value={settings.toc.useReadingProgress}
+							onChange={async (value) => {
+								await settingsStore.updateSettingByPath(
+									"toc.useReadingProgress",
+									value,
+								);
+							}}
+						/>
+					),
+				}}
+			/>
 		</ObsidianSetting.Container>
 	);
 };

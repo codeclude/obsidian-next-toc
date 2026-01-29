@@ -1,5 +1,5 @@
 {
-	"name": "next-toc",
+	"name": "next-toc-reading-progress",
 	"version": "2.0.0",
 	"description": "Floating panel displaying the current document's reading progress, table of contents, and navigation aids.",
 	"main": "main.js",

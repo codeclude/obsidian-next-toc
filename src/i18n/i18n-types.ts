@@ -185,6 +185,16 @@ type RootTranslation = {
 					hidden: string
 				}
 			}
+			useReadingProgress: {
+				/**
+				 * 使​用​阅​读​进​度
+				 */
+				name: string
+				/**
+				 * 保​存​阅​读​进​度​到​文​件​属​性​并​在​打​开​时​恢​复​滚​动​位​置
+				 */
+				desc: string
+			}
 		}
 		render: {
 			/**
@@ -353,6 +363,16 @@ type RootTranslation = {
 				 */
 				desc: string
 			}
+			resetReadingProgress: {
+				/**
+				 * 重​置​阅​读​进​度
+				 */
+				name: string
+				/**
+				 * 将​阅​读​进​度​更​新​为​当​前​滚​动​位​置
+				 */
+				desc: string
+			}
 		}
 	}
 	cards: {
@@ -516,6 +536,10 @@ type RootTranslation = {
 		 * 上​一​个​标​题
 		 */
 		jumpToPrevHeading: string
+		/**
+		 * 重​置​阅​读​进​度
+		 */
+		resetReadingProgress: string
 	}
 }
 
@@ -688,6 +712,16 @@ export type TranslationFunctions = {
 					hidden: () => LocalizedString
 				}
 			}
+			useReadingProgress: {
+				/**
+				 * 使用阅读进度
+				 */
+				name: () => LocalizedString
+				/**
+				 * 保存阅读进度到文件属性并在打开时恢复滚动位置
+				 */
+				desc: () => LocalizedString
+			}
 		}
 		render: {
 			/**
@@ -856,6 +890,16 @@ export type TranslationFunctions = {
 				 */
 				desc: () => LocalizedString
 			}
+			resetReadingProgress: {
+				/**
+				 * 重置阅读进度
+				 */
+				name: () => LocalizedString
+				/**
+				 * 将阅读进度更新为当前滚动位置
+				 */
+				desc: () => LocalizedString
+			}
 		}
 	}
 	cards: {
@@ -1019,6 +1063,10 @@ export type TranslationFunctions = {
 		 * 上一个标题
 		 */
 		jumpToPrevHeading: () => LocalizedString
+		/**
+		 * 重置阅读进度
+		 */
+		resetReadingProgress: () => LocalizedString
 	}
 }
 

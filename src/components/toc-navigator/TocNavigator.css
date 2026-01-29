@@ -1,6 +1,6 @@
 .NToc__container {
 	position: absolute;
-	top: 6%;
+	top: 10%;
 	height: fit-content;
 	display: flex;
 	flex-direction: column;
@@ -27,7 +27,8 @@
 		}
 
 		.NToc__group-resize {
-			right: -2px; /* 调整到容器右边缘外侧 */
+			right: -2px;
+			/* 调整到容器右边缘外侧 */
 		}
 
 		.NToc__return-tools {
@@ -42,7 +43,7 @@
 			}
 
 			/* 滚动条内容需要重置方向 */
-			> * {
+			>* {
 				direction: ltr;
 			}
 		}
@@ -66,7 +67,8 @@
 		}
 
 		.NToc__group-resize {
-			left: -2px; /* 调整到容器左边缘外侧 */
+			left: -2px;
+			/* 调整到容器左边缘外侧 */
 		}
 
 		.NToc__return-tools {
@@ -86,6 +88,7 @@
 	}
 
 	&:has(.NToc__group-content.NToc__group-content-expanded) {
+
 		.NToc__progress-circle-container,
 		.NToc__group-indicators {
 			visibility: hidden;
@@ -143,12 +146,14 @@
 	transition: all 0.2s ease;
 	display: flex;
 	flex-direction: column;
-	pointer-events: none; /* 防止内容区域触发父元素的鼠标事件 */
+	pointer-events: none;
+	/* 防止内容区域触发父元素的鼠标事件 */
 
 	&.NToc__group-content-expanded {
 		opacity: 1;
 		visibility: visible;
-		pointer-events: auto; /* 展开时恢复鼠标事件 */
+		pointer-events: auto;
+		/* 展开时恢复鼠标事件 */
 	}
 
 	/* 使用扩展的 hover 区域来防止闪烁 */
@@ -215,13 +220,16 @@
 
 	/* 滚动条 */
 	scrollbar-width: auto;
+
 	&::-webkit-scrollbar {
 		display: block;
 		width: 6px;
 	}
+
 	&::-webkit-scrollbar-track {
 		background: transparent;
 	}
+
 	&::-webkit-scrollbar-thumb {
 		background-color: var(--scrollbar-thumb-bg);
 		border-radius: 3px;
@@ -246,11 +254,9 @@
 		left: 0;
 		height: 100%;
 		width: var(--NToc__toc-progress-width);
-		background: linear-gradient(
-			90deg,
-			var(--interactive-accent) 0%,
-			var(--interactive-accent-hover) 100%
-		);
+		background: linear-gradient(90deg,
+				var(--interactive-accent) 0%,
+				var(--interactive-accent-hover) 100%);
 		border-radius: 0 2px 2px 0;
 		transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	}

@@ -1,7 +1,10 @@
 import { MarkdownView } from "obsidian";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export const useScrollProgress = (currentView: MarkdownView | null) => {
+export const useScrollProgress = (
+	currentView: MarkdownView | null,
+	refreshTrigger?: any
+) => {
 	const [progress, setProgress] = useState(0);
 	const scrollListenerRef = useRef<(() => void) | null>(null);
 
@@ -107,7 +110,7 @@ export const useScrollProgress = (currentView: MarkdownView | null) => {
 				scrollListenerRef.current = null;
 			}
 		};
-	}, [currentView, findScrollElement, handleScroll, calculateProgress]);
+	}, [currentView, findScrollElement, handleScroll, calculateProgress, refreshTrigger]);
 
 	return progress;
 };

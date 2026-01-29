@@ -64,6 +64,10 @@ const zh = {
 					hidden: "隐藏",
 				},
 			},
+			useReadingProgress: {
+				name: "使用阅读进度",
+				desc: "保存阅读进度到文件属性并在打开时恢复滚动位置",
+			},
 		},
 		render: {
 			name: "渲染",
@@ -133,6 +137,10 @@ const zh = {
 				name: "跳转到上一个标题",
 				desc: "跳转到上一个标题的按钮",
 			},
+			resetReadingProgress: {
+				name: "重置阅读进度",
+				desc: "将阅读进度更新为当前滚动位置",
+			},
 		},
 	},
 	cards: {
@@ -182,6 +190,7 @@ const zh = {
 		returnToBottom: "返回底部",
 		jumpToNextHeading: "下一个标题",
 		jumpToPrevHeading: "上一个标题",
+		resetReadingProgress: "重置阅读进度",
 	},
 } satisfies BaseTranslation;
 

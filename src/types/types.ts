@@ -14,6 +14,7 @@ export interface IPluginSettings {
 		position: NTocPosition;
 		offset: number;
 		indicatorMode: NTocIndicatorMode;
+		useReadingProgress: boolean;
 	};
 	render: {
 		useHeadingNumber: boolean;
@@ -32,6 +33,7 @@ export interface IPluginSettings {
 		returnToBottom: IButtonTool;
 		jumpToNextHeading: IButtonTool;
 		jumpToPrevHeading: IButtonTool;
+		resetReadingProgress: IButtonTool;
 	};
 }
 
@@ -43,6 +45,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 		position: "right",
 		offset: 12,
 		indicatorMode: "bar",
+		useReadingProgress: true,
 	},
 	render: {
 		useHeadingNumber: false,
@@ -75,6 +78,10 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 		jumpToPrevHeading: {
 			enabled: false,
 			icon: "corner-left-up",
+		},
+		resetReadingProgress: {
+			enabled: true,
+			icon: "save",
 		},
 	},
 };

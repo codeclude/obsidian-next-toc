@@ -41,8 +41,14 @@ export const TocNavigator: FC<TocNavigatorProps> = ({
 
 	const [isHovered, setIsHovered] = useState<boolean>(false);
 
+	// 获取阅读进度
+	const readingProgress = settings.toc.useReadingProgress
+		? (currentView.app.metadataCache.getFileCache(currentView.file!)
+			?.frontmatter?.["reading-status"] as number) ?? 0
+		: undefined;
+
 	// 获取滚动进度
-	const scrollProgress = useScrollProgress(currentView);
+	const scrollProgress = useScrollProgress(currentView, readingProgress);
 
 	// 使用 TOC 展开状态 Hook（结合 frontmatter 和 alwaysExpand）
 	const shouldExpandToc = useTocExpansion({
@@ -161,6 +167,7 @@ export const TocNavigator: FC<TocNavigatorProps> = ({
 					<div className="NToc__progress-circle-container">
 						<ProgressCircle
 							percentage={scrollProgress}
+							readingProgress={readingProgress}
 							showText={true}
 						/>
 					</div>

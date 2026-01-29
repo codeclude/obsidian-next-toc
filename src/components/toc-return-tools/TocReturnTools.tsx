@@ -35,6 +35,7 @@ export const TocReturnTools: FC<TocReturnToolsProps> = ({
 		{ key: "returnToBottom", config: settings.tool.returnToBottom },
 		{ key: "jumpToNextHeading", config: settings.tool.jumpToNextHeading },
 		{ key: "jumpToPrevHeading", config: settings.tool.jumpToPrevHeading },
+		{ key: "resetReadingProgress", config: settings.tool.resetReadingProgress },
 	].filter((tool) => {
 		// returnToCursor 只在编辑模式下显示
 		if (tool.key === "returnToCursor" && !isSourceMode(currentView)) {
@@ -85,6 +86,33 @@ export const TocReturnTools: FC<TocReturnToolsProps> = ({
 			case "jumpToPrevHeading":
 				void navigateHeading(currentView, headings, "prev");
 				break;
+			case "resetReadingProgress": {
+				const scrollEl =
+					currentView.contentEl.querySelector(".cm-scroller") ||
+					currentView.contentEl.querySelector(
+						".markdown-preview-view"
+					);
+
+				if (scrollEl && currentView.file) {
+					const scrollTop = scrollEl.scrollTop;
+					const scrollHeight = scrollEl.scrollHeight;
+					const clientHeight = scrollEl.clientHeight;
+					const maxScroll = scrollHeight - clientHeight;
+
+					if (maxScroll > 0) {
+						const percentage = Math.round(
+							(scrollTop / maxScroll) * 100
+						);
+						currentView.app.fileManager.processFrontMatter(
+							currentView.file,
+							(frontmatter) => {
+								frontmatter["reading-status"] = percentage;
+							}
+						);
+					}
+				}
+				break;
+			}
 			default:
 				throw new Error(`Unknown tool: ${toolKey}`);
 		}
@@ -103,11 +131,10 @@ export const TocReturnTools: FC<TocReturnToolsProps> = ({
 			{/* 展开的工具按钮 */}
 			{isExpanded && enabledTools.length > 0 && (
 				<div
-					className={`NToc__tool-buttons ${
-						settings.toc.position === "left"
-							? "NToc__tool-expand-right"
-							: "NToc__tool-expand-left"
-					}`}
+					className={`NToc__tool-buttons ${settings.toc.position === "left"
+						? "NToc__tool-expand-right"
+						: "NToc__tool-expand-left"
+						}`}
 					aria-label={LL.tools.returnNavigation()}
 				>
 					{enabledTools.map((tool) => {

@@ -272,6 +272,46 @@ export const ToolTabContent: FC = () => {
 					),
 				}}
 			/>
+
+			<ObsidianSetting
+				slots={{
+					name: LL.settings.tool.resetReadingProgress.name(),
+					desc: LL.settings.tool.resetReadingProgress.desc(),
+					control: (
+						<>
+							<ObsidianSetting.Toggle
+								value={settings.tool.resetReadingProgress.enabled}
+								onChange={(value) => {
+									void settingsStore.updateSettingByPath(
+										"tool.resetReadingProgress.enabled",
+										value
+									);
+								}}
+							/>
+							<ObsidianSetting.ExtraButton
+								icon={"reset"}
+								onClick={() => {
+									void settingsStore.updateSettingByPath(
+										"tool.resetReadingProgress.icon",
+										DEFAULT_SETTINGS.tool.resetReadingProgress
+											.icon
+									);
+								}}
+							/>
+							<IconPicker
+								app={app}
+								value={settings.tool.resetReadingProgress.icon}
+								onChange={(icon) => {
+									void settingsStore.updateSettingByPath(
+										"tool.resetReadingProgress.icon",
+										icon
+									);
+								}}
+							/>
+						</>
+					),
+				}}
+			/>
 		</ObsidianSetting.Container>
 	);
 };

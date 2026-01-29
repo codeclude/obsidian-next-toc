@@ -64,6 +64,10 @@ const zh_TW = {
 					hidden: "隱藏",
 				},
 			},
+			useReadingProgress: {
+				name: "使用閱讀進度",
+				desc: "儲存閱讀進度至檔案屬性並在開啟時恢復捲動位置",
+			},
 		},
 		render: {
 			name: "渲染",
@@ -133,6 +137,10 @@ const zh_TW = {
 				name: "跳至上一個標題",
 				desc: "跳至上一個標題的按鈕",
 			},
+			resetReadingProgress: {
+				name: "重置閱讀進度",
+				desc: "將閱讀進度更新為目前捲動位置",
+			},
 		},
 	},
 	cards: {
@@ -182,6 +190,7 @@ const zh_TW = {
 		returnToBottom: "返回底部",
 		jumpToNextHeading: "下一个标题",
 		jumpToPrevHeading: "上一个标题",
+		resetReadingProgress: "重置閱讀進度",
 	},
 } satisfies BaseTranslation;
 

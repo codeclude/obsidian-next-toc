@@ -29,6 +29,8 @@ export default class NTocPlugin extends Plugin {
 	currentView = this.app.workspace.getActiveViewOfType(MarkdownView);
 	readonly settingsStore = new SettingsStore(this);
 	private scrollListenerCleanup: (() => void) | null = null;
+	private currentFileReadingStatus = 0;
+	private readingProgressSaveTimeout: NodeJS.Timeout | null = null;
 
 	async onload() {
 		await this.settingsStore.loadSettings();
@@ -282,6 +284,58 @@ export default class NTocPlugin extends Plugin {
 				if (leaf?.view instanceof MarkdownView) {
 					this.currentView = leaf.view;
 
+					// Handling reading progress restoration
+					if (
+						this.settings.toc.useReadingProgress &&
+						this.currentView.file
+					) {
+						const cache = this.app.metadataCache.getFileCache(
+							this.currentView.file,
+						);
+						const readingStatus =
+							cache?.frontmatter?.["reading-status"];
+
+						if (
+							typeof readingStatus === "number" &&
+							readingStatus > 0
+						) {
+							// Store the status to prevent overwriting with 0/lower values immediately
+							this.currentFileReadingStatus = readingStatus;
+
+							// Scroll to position
+							// Use a short delay to ensure view is ready
+							setTimeout(() => {
+								if (this.currentView?.contentEl) {
+									const scrollEl =
+										this.currentView.contentEl.querySelector(
+											".cm-scroller",
+										) ||
+										this.currentView.contentEl.querySelector(
+											".markdown-preview-view",
+										);
+
+									if (scrollEl) {
+										const scrollHeight =
+											scrollEl.scrollHeight;
+										const clientHeight =
+											scrollEl.clientHeight;
+										const maxScroll =
+											scrollHeight - clientHeight;
+										const targetScroll =
+											(readingStatus / 100) * maxScroll;
+
+										scrollEl.scrollTo({
+											top: targetScroll,
+											behavior: "auto",
+										});
+									}
+								}
+							}, 200);
+						} else {
+							this.currentFileReadingStatus = 0;
+						}
+					}
+
 					// 使用 requestAnimationFrame 延迟初始化，避免闪烁
 					requestAnimationFrame(() => {
 						this.setupScrollListener();
@@ -316,6 +370,11 @@ export default class NTocPlugin extends Plugin {
 		this.registerEvent(
 			this.app.metadataCache.on("changed", (file) => {
 				if (this.currentView && this.currentView.file === file) {
+					const cache = this.app.metadataCache.getFileCache(file);
+					const readingStatus = cache?.frontmatter?.["reading-status"];
+					if (typeof readingStatus === "number") {
+						this.currentFileReadingStatus = readingStatus;
+					}
 					this.updateNToc();
 				}
 			}),
@@ -353,13 +412,58 @@ export default class NTocPlugin extends Plugin {
 						target.classList.contains("markdown-preview-view")
 					) {
 						this.updateNToc();
+
+						// Handle Reading Progress
+						if (this.settings.toc.useReadingProgress) {
+							const scrollTop = target.scrollTop;
+							const scrollHeight = target.scrollHeight;
+							const clientHeight = target.clientHeight;
+							const maxScroll = scrollHeight - clientHeight;
+
+							if (maxScroll > 0) {
+								const percentage = Math.round(
+									(scrollTop / maxScroll) * 100,
+								);
+
+								if (this.readingProgressSaveTimeout) {
+									clearTimeout(this.readingProgressSaveTimeout);
+								}
+
+								this.readingProgressSaveTimeout = setTimeout(() => {
+									this.saveReadingProgress(percentage);
+								}, 500); // 1s debounce for saving
+							}
+						}
 					}
 				},
 			},
 		);
 	}
 
+	private saveReadingProgress(percentage: number) {
+		if (!this.currentView?.file || !this.settings.toc.useReadingProgress)
+			return;
+
+		// Only update if progress is significantly larger (e.g. > stored + 1%)
+		// But the requirement says "only if actual value is bigger than last value"
+		if (percentage > this.currentFileReadingStatus) {
+			this.currentFileReadingStatus = percentage;
+			this.app.fileManager.processFrontMatter(
+				this.currentView.file,
+				(frontmatter) => {
+					frontmatter["reading-status"] = percentage;
+				},
+			);
+		}
+	}
+
+
+
 	private cleanupScrollListener() {
+		if (this.readingProgressSaveTimeout) {
+			clearTimeout(this.readingProgressSaveTimeout);
+			this.readingProgressSaveTimeout = null;
+		}
 		if (this.scrollListenerCleanup) {
 			this.scrollListenerCleanup();
 			this.scrollListenerCleanup = null;

@@ -66,6 +66,10 @@ const en = {
 					hidden: "Hidden",
 				},
 			},
+			useReadingProgress: {
+				name: "Use reading progress",
+				desc: "Save reading progress to file properties and restore scroll position on open",
+			},
 		},
 		render: {
 			name: "Render",
@@ -135,6 +139,10 @@ const en = {
 				name: "Jump to previous heading",
 				desc: "Button to jump to the previous heading",
 			},
+			resetReadingProgress: {
+				name: "Reset reading progress",
+				desc: "Button to update the reading progress to the current scroll position",
+			},
 		},
 	},
 	cards: {
@@ -184,6 +192,7 @@ const en = {
 		returnToBottom: "To bottom",
 		jumpToNextHeading: "Next heading",
 		jumpToPrevHeading: "Previous heading",
+		resetReadingProgress: "Reset reading progress",
 	},
 } satisfies BaseTranslation;
 
