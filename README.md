@@ -26,6 +26,10 @@ Floating panel displaying the current document's reading progress, table of cont
 3. Enter `Raven-Pensieve/obsidian-next-toc`
 4. Enable the plugin
 
+## Demo of Reading progress
+https://github.com/user-attachments/assets/107d4b43-4e16-4bc6-8f72-c51028329683
+
+
 ## License
 
 This project is licensed under the GPL-3.0 LICENSE - see the [LICENSE](LICENSE) file for details.
