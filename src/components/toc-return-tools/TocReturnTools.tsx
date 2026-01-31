@@ -6,6 +6,7 @@ import {
 	navigateHeading,
 	returnToCursor,
 	scrollTopBottom,
+	updateReadingProgress,
 } from "@src/utils/tocToolsActions";
 import { Component } from "lucide-react";
 import { HeadingCache, MarkdownView, setIcon } from "obsidian";
@@ -86,33 +87,9 @@ export const TocReturnTools: FC<TocReturnToolsProps> = ({
 			case "jumpToPrevHeading":
 				void navigateHeading(currentView, headings, "prev");
 				break;
-			case "resetReadingProgress": {
-				const scrollEl =
-					currentView.contentEl.querySelector(".cm-scroller") ||
-					currentView.contentEl.querySelector(
-						".markdown-preview-view"
-					);
-
-				if (scrollEl && currentView.file) {
-					const scrollTop = scrollEl.scrollTop;
-					const scrollHeight = scrollEl.scrollHeight;
-					const clientHeight = scrollEl.clientHeight;
-					const maxScroll = scrollHeight - clientHeight;
-
-					if (maxScroll > 0) {
-						const percentage = Math.round(
-							(scrollTop / maxScroll) * 100
-						);
-						currentView.app.fileManager.processFrontMatter(
-							currentView.file,
-							(frontmatter) => {
-								frontmatter["reading-status"] = percentage;
-							}
-						);
-					}
-				}
+			case "resetReadingProgress":
+				updateReadingProgress(currentView);
 				break;
-			}
 			default:
 				throw new Error(`Unknown tool: ${toolKey}`);
 		}

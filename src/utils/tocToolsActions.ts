@@ -49,7 +49,7 @@ export const scrollTopBottom = (view: MarkdownView, to: "top" | "bottom") => {
 				const finalMaxScroll = Math.max(
 					0,
 					previewContainer.scrollHeight -
-						previewContainer.clientHeight
+					previewContainer.clientHeight
 				);
 				view.currentMode.applyScroll(finalMaxScroll);
 				previewContainer.scrollTop = finalMaxScroll;
@@ -108,5 +108,76 @@ export const navigateHeading = async (
 
 	if (targetIndex >= 0 && targetIndex < headings.length) {
 		await scrollToHeading(view, headings[targetIndex]);
+	}
+};
+
+/**
+ * 更新阅读进度到 Frontmatter
+ */
+export const updateReadingProgress = (view: MarkdownView) => {
+	if (!view || !view.file) return;
+
+	let scrollEl: HTMLElement | null = null;
+
+	// Determine mode to pick the correct scroller
+	if (isSourceMode(view)) {
+		scrollEl = view.contentEl.querySelector(".cm-scroller") as HTMLElement;
+	} else {
+		scrollEl = view.contentEl.querySelector(
+			".markdown-preview-view"
+		) as HTMLElement;
+	}
+
+	// Double check if we found it. If not, try to find any scroller.
+	if (!scrollEl) {
+		const candidates = Array.from(
+			view.contentEl.querySelectorAll(".cm-scroller, .markdown-preview-view")
+		) as HTMLElement[];
+		if (candidates.length > 0) {
+			scrollEl = candidates[0];
+		}
+	}
+
+	if (scrollEl) {
+		const scrollTop = scrollEl.scrollTop;
+		const scrollHeight = scrollEl.scrollHeight;
+		const clientHeight = scrollEl.clientHeight;
+		const maxScroll = scrollHeight - clientHeight;
+
+		if (maxScroll > 0) {
+			const percentage = Math.round((scrollTop / maxScroll) * 100);
+			view.app.fileManager.processFrontMatter(view.file, (frontmatter) => {
+				frontmatter["reading-status"] = percentage;
+			});
+		} else {
+			// If maxScroll <= 0, check if another candidate fits better before setting 100%
+			const candidates = Array.from(
+				view.contentEl.querySelectorAll(".cm-scroller, .markdown-preview-view")
+			) as HTMLElement[];
+
+			const betterCandidate = candidates.find(
+				(el) => el.scrollHeight - el.clientHeight > 0
+			);
+
+			if (betterCandidate && betterCandidate !== scrollEl) {
+				const bScrollTop = betterCandidate.scrollTop;
+				const bMaxScroll =
+					betterCandidate.scrollHeight - betterCandidate.clientHeight;
+				const bPercentage = Math.round((bScrollTop / bMaxScroll) * 100);
+				view.app.fileManager.processFrontMatter(
+					view.file,
+					(frontmatter) => {
+						frontmatter["reading-status"] = bPercentage;
+					}
+				);
+				return;
+			}
+
+			view.app.fileManager.processFrontMatter(view.file, (frontmatter) => {
+				frontmatter["reading-status"] = 100;
+			});
+		}
+	} else {
+		console.warn("NToc: Could not find scroll element to update reading progress.");
 	}
 };
