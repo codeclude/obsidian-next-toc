@@ -1,6 +1,6 @@
 import { EditorView } from "@codemirror/view";
 import "@styles/styles";
-import { Editor, MarkdownView, Plugin } from "obsidian";
+import { Editor, MarkdownView, Plugin, TFile } from "obsidian";
 import {
 	NTocRenderProps,
 	updateNTocRender,
@@ -287,7 +287,8 @@ export default class NTocPlugin extends Plugin {
 					// Handling reading progress restoration
 					if (
 						this.settings.toc.useReadingProgress &&
-						this.currentView.file
+						this.currentView.file &&
+						this.isFileMatched(this.currentView.file)
 					) {
 						const cache = this.app.metadataCache.getFileCache(
 							this.currentView.file,
@@ -304,23 +305,28 @@ export default class NTocPlugin extends Plugin {
 
 							// Scroll to position
 							// Use a short delay to ensure view is ready
-							setTimeout(() => {
-								if (this.currentView?.contentEl) {
-									const scrollEl =
-										this.currentView.contentEl.querySelector(
-											".cm-scroller",
-										) ||
-										this.currentView.contentEl.querySelector(
-											".markdown-preview-view",
-										);
+							// Retry scroll restoration
+							let attempts = 0;
+							const maxAttempts = 10;
+							const interval = 200; // Total ~2s
 
-									if (scrollEl) {
-										const scrollHeight =
-											scrollEl.scrollHeight;
-										const clientHeight =
-											scrollEl.clientHeight;
-										const maxScroll =
-											scrollHeight - clientHeight;
+							const tryScroll = () => {
+								if (!this.currentView?.contentEl) return;
+
+								const scrollEl =
+									this.currentView.contentEl.querySelector(
+										".cm-scroller"
+									) ||
+									this.currentView.contentEl.querySelector(
+										".markdown-preview-view"
+									);
+
+								if (scrollEl) {
+									const scrollHeight = scrollEl.scrollHeight;
+									const clientHeight = scrollEl.clientHeight;
+									const maxScroll = scrollHeight - clientHeight;
+
+									if (maxScroll > 0) {
 										const targetScroll =
 											(readingStatus / 100) * maxScroll;
 
@@ -328,9 +334,23 @@ export default class NTocPlugin extends Plugin {
 											top: targetScroll,
 											behavior: "auto",
 										});
+
+										// If we successfully scrolled, we can stop. 
+										// However, sometimes layout continues to shift.
+										// But keep it simple for now: if we set it, we assume it works.
+										// Maybe we can check if it actually moved? 
+										// Logic: if maxScroll > 0, we trust it.
+										return;
 									}
 								}
-							}, 200);
+
+								attempts++;
+								if (attempts < maxAttempts) {
+									setTimeout(tryScroll, interval);
+								}
+							};
+
+							tryScroll();
 						} else {
 							this.currentFileReadingStatus = 0;
 						}
@@ -470,6 +490,30 @@ export default class NTocPlugin extends Plugin {
 		}
 	}
 
+	private isFileMatched(file: TFile | null): boolean {
+		if (!file) return false;
+
+		const requiredTags = this.settings.toc.requiredFrontmatterTags;
+		if (!requiredTags || requiredTags.length === 0) {
+			return true;
+		}
+
+		const cache = this.app.metadataCache.getFileCache(file);
+		const frontmatterTags = cache?.frontmatter?.tags;
+
+		if (frontmatterTags) {
+			const tagsArray = Array.isArray(frontmatterTags)
+				? frontmatterTags
+				: typeof frontmatterTags === "string"
+					? frontmatterTags.split(",").map((t) => t.trim())
+					: [];
+
+			return requiredTags.some((reqTag) => tagsArray.includes(reqTag));
+		}
+
+		return false;
+	}
+
 	private getActiveMarkdownView(): MarkdownView | null {
 		const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
 
@@ -495,33 +539,12 @@ export default class NTocPlugin extends Plugin {
 		}
 
 		// Check for required frontmatter tags
-		const requiredTags = this.settings.toc.requiredFrontmatterTags;
-		if (requiredTags && requiredTags.length > 0) {
-			const cache = this.app.metadataCache.getFileCache(
-				this.currentView.file,
-			);
-			const frontmatterTags = cache?.frontmatter?.tags;
-			let hasRequiredTag = false;
-
-			if (frontmatterTags) {
-				const tagsArray = Array.isArray(frontmatterTags)
-					? frontmatterTags
-					: typeof frontmatterTags === "string"
-						? frontmatterTags.split(",").map((t) => t.trim()) // Handle comma-separated string in frontmatter
-						: [];
-
-				hasRequiredTag = requiredTags.some((reqTag) =>
-					tagsArray.includes(reqTag),
-				);
-			}
-
-			if (!hasRequiredTag) {
-				this.renderNToc(null, {
-					headings: [],
-					activeHeadingIndex: -1,
-				});
-				return;
-			}
+		if (!this.isFileMatched(this.currentView.file)) {
+			this.renderNToc(null, {
+				headings: [],
+				activeHeadingIndex: -1,
+			});
+			return;
 		}
 
 		const headings = getFileHeadings(this.currentView);
