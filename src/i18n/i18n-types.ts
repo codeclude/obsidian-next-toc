@@ -195,6 +195,16 @@ type RootTranslation = {
 				 */
 				desc: string
 			}
+			requiredFrontmatterTags: {
+				/**
+				 * 必​需​的​ ​F​r​o​n​t​m​a​t​t​e​r​ ​标​签
+				 */
+				name: string
+				/**
+				 * 如​果​设​置​，​T​O​C​ ​仅​对​具​有​至​少​一​个​指​定​标​签​的​笔​记​启​用​。​多​个​标​签​用​逗​号​分​隔​。​留​空​则​对​所​有​笔​记​启​用​。
+				 */
+				desc: string
+			}
 		}
 		render: {
 			/**
@@ -719,6 +729,16 @@ export type TranslationFunctions = {
 				name: () => LocalizedString
 				/**
 				 * 保存阅读进度到文件属性并在打开时恢复滚动位置
+				 */
+				desc: () => LocalizedString
+			}
+			requiredFrontmatterTags: {
+				/**
+				 * 必需的 Frontmatter 标签
+				 */
+				name: () => LocalizedString
+				/**
+				 * 如果设置，TOC 仅对具有至少一个指定标签的笔记启用。多个标签用逗号分隔。留空则对所有笔记启用。
 				 */
 				desc: () => LocalizedString
 			}

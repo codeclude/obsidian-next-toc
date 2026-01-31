@@ -15,6 +15,7 @@ export interface IPluginSettings {
 		offset: number;
 		indicatorMode: NTocIndicatorMode;
 		useReadingProgress: boolean;
+		requiredFrontmatterTags: string[];
 	};
 	render: {
 		useHeadingNumber: boolean;
@@ -46,6 +47,7 @@ export const DEFAULT_SETTINGS: IPluginSettings = {
 		offset: 12,
 		indicatorMode: "bar",
 		useReadingProgress: true,
+		requiredFrontmatterTags: [], // Add requiredFrontmatterTags
 	},
 	render: {
 		useHeadingNumber: false,

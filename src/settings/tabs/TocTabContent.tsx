@@ -152,6 +152,29 @@ export const TocTabContent: FC = () => {
 					),
 				}}
 			/>
+
+			<ObsidianSetting
+				slots={{
+					name: LL.settings.toc.requiredFrontmatterTags.name(),
+					desc: LL.settings.toc.requiredFrontmatterTags.desc(),
+					control: (
+						<ObsidianSetting.TextArea
+							value={settings.toc.requiredFrontmatterTags.join(", ")}
+							placeholder="e.g. toc, my-tag"
+							onChange={async (value) => {
+								const tags = value
+									.split(",")
+									.map((t) => t.trim())
+									.filter((t) => t.length > 0);
+								await settingsStore.updateSettingByPath(
+									"toc.requiredFrontmatterTags",
+									tags,
+								);
+							}}
+						/>
+					),
+				}}
+			/>
 		</ObsidianSetting.Container>
 	);
 };

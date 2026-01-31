@@ -494,6 +494,36 @@ export default class NTocPlugin extends Plugin {
 			return;
 		}
 
+		// Check for required frontmatter tags
+		const requiredTags = this.settings.toc.requiredFrontmatterTags;
+		if (requiredTags && requiredTags.length > 0) {
+			const cache = this.app.metadataCache.getFileCache(
+				this.currentView.file,
+			);
+			const frontmatterTags = cache?.frontmatter?.tags;
+			let hasRequiredTag = false;
+
+			if (frontmatterTags) {
+				const tagsArray = Array.isArray(frontmatterTags)
+					? frontmatterTags
+					: typeof frontmatterTags === "string"
+						? frontmatterTags.split(",").map((t) => t.trim()) // Handle comma-separated string in frontmatter
+						: [];
+
+				hasRequiredTag = requiredTags.some((reqTag) =>
+					tagsArray.includes(reqTag),
+				);
+			}
+
+			if (!hasRequiredTag) {
+				this.renderNToc(null, {
+					headings: [],
+					activeHeadingIndex: -1,
+				});
+				return;
+			}
+		}
+
 		const headings = getFileHeadings(this.currentView);
 		const activeHeadingIndex = updateActiveHeading(
 			this.currentView,

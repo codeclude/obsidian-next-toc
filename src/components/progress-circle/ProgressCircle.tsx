@@ -41,14 +41,17 @@ export const ProgressCircle: FC<ProgressCircleProps> = ({
 							root: {},
 							path: {
 								stroke: "#0df",
-								strokeLinecap: "butt",
+								strokeLinecap: "inherit",
 								transition: "stroke-dashoffset 0.5s ease 0s",
 							},
 							trail: {
-								stroke: "var(--text-muted)",
+								stroke: "var(--background-modifier-border)",
 							},
 							text: {
-								fill: "#0df",
+								fill: "var(--text-normal)",
+								fontSize: "1.5rem",
+								dominantBaseline: "middle",
+								textAnchor: "middle",
 							},
 						}}
 					/>
@@ -65,7 +68,7 @@ export const ProgressCircle: FC<ProgressCircleProps> = ({
 						root: {},
 						path: {
 							stroke: "var(--interactive-accent)",
-							strokeLinecap: "round",
+							strokeLinecap: "inherit",
 							transition: "stroke-dashoffset 0.5s ease 0s",
 						},
 						trail: {

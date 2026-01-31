@@ -68,6 +68,10 @@ const zh = {
 				name: "使用阅读进度",
 				desc: "保存阅读进度到文件属性并在打开时恢复滚动位置",
 			},
+			requiredFrontmatterTags: {
+				name: "必需的 Frontmatter 标签",
+				desc: "如果设置，TOC 仅对具有至少一个指定标签的笔记启用。多个标签用逗号分隔。留空则对所有笔记启用。",
+			},
 		},
 		render: {
 			name: "渲染",

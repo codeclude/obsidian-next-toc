@@ -70,6 +70,10 @@ const en = {
 				name: "Use reading progress",
 				desc: "Save reading progress to file properties and restore scroll position on open",
 			},
+			requiredFrontmatterTags: {
+				name: "Required frontmatter tags",
+				desc: "If set, the TOC will only be enabled for notes that have at least one of the specified tags. Separate multiple tags with commas. Leave empty to enable for all notes.",
+			},
 		},
 		render: {
 			name: "Render",
